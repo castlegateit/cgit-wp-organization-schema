@@ -97,11 +97,11 @@ class Plugin
         $image_url = get_field('cgit_wp_organization_schema_image_url', 'options');
 
         if ($logo_url) {
-            $organization->logo($logo_url);
+            $organization->logo(static::sanitizeAcfImageUrl($logo_url));
         }
 
         if ($image_url) {
-            $organization->image($image_url);
+            $organization->image(static::sanitizeAcfImageUrl($image_url));
         }
 
         // Links from options page
@@ -159,5 +159,38 @@ class Plugin
         return array_filter($pieces, function ($piece) {
             return !$piece instanceof \Yoast\WP\SEO\Generators\Schema\Organization;
         });
+    }
+
+    /**
+     * Sanitize ACF image field return value to URL
+     *
+     * @param mixed $image
+     * @return string
+     */
+    public static function sanitizeAcfImageUrl($image): string
+    {
+        if (is_string($image)) {
+            return $image;
+        }
+
+        if (is_int($image)) {
+            $url = wp_get_attachment_image_url($image, 'full');
+
+            if (is_string($url)) {
+                return $url;
+            }
+
+            return '';
+        }
+
+        if (
+            is_array($image) &&
+            array_key_exists('url', $image) &&
+            is_string($image['url'])
+        ) {
+            return $image['url'];
+        }
+
+        return '';
     }
 }
