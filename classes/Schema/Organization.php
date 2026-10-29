@@ -141,7 +141,8 @@ class Organization extends CastlegateSchemaMapOrganization
      */
     public function toSpatieObject(): mixed
     {
-        $class = '\\Castlegate\\SchemaMap\\Vendor\\Spatie\\SchemaOrg\\' . end(explode('\\', static::class));
+        $parts = explode('\\', static::class);
+        $class = '\\Castlegate\\SchemaMap\\Vendor\\Spatie\\SchemaOrg\\' . end($parts);
         $organization = $this->populateSpatieOrganization(new $class());
 
         // Address property = PostalAddress schema
